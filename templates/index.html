@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureMail - Secure Communication Platform</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1f1f2e;
+            --secondary-color: #373751;
+            --accent-color: #4a5568;
+            --text-light: #ffffff;
+            --text-dark: #2d3748;
+            --success-color: #059669;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            min-height: 100vh;
+        }
+
+        .main-header {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-container h1 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .auth-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .login-btn {
+            background-color: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .login-btn:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .register-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: 2px solid var(--primary-color);
+        }
+
+        .register-btn:hover {
+            background-color: var(--secondary-color);
+            border-color: var(--secondary-color);
+        }
+
+        .landing-content {
+            padding: 8rem 2rem 4rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .hero-section {
+            text-align: center;
+            color: var(--text-light);
+            margin-bottom: 4rem;
+        }
+
+        .hero-section h2 {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .hero-section p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .welcome-message {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 4rem;
+            color: var(--text-light);
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .welcome-message h3 {
+            font-size: 1.75rem;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .welcome-message p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .feature-item {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .feature-item h3 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .feature-item p {
+            color: var(--accent-color);
+        }
+
+        footer {
+            background-color: rgba(0, 0, 0, 0.2);
+            color: var(--text-light);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h2 {
+                font-size: 2rem;
+            }
+
+            .hero-section p {
+                font-size: 1.1rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .main-header {
+                padding: 1rem;
+            }
+
+            .auth-buttons {
+                gap: 0.5rem;
+            }
+
+            .auth-button {
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <div class="logo-container">
+            <i class="bi bi-shield-lock-fill logo-icon"></i>
+            <h1>SecureMail</h1>
+        </div>
+        <div class="auth-buttons">
+            <a href="/login" class="auth-button login-btn">
+                <i class="bi bi-box-arrow-in-right"></i> Login
+            </a>
+            <a href="/register" class="auth-button register-btn">
+                <i class="bi bi-person-plus"></i> Register
+            </a>
+        </div>
+    </header>
+
+    <main class="landing-content">
+        <section class="hero-section">
+            <h2>Welcome to SecureMail</h2>
+            <p>Your trusted platform for secure communication</p>
+        </section>
+
+        <section class="welcome-message">
+            <h3>Experience Next-Level Email Security</h3>
+            <p>Join thousands of users who trust SecureMail for their confidential communications. 
+            Our state-of-the-art encryption and security features ensure your messages stay private and protected.</p>
+        </section>
+
+        <section class="features">
+            <div class="feature-item">
+                <i class="bi bi-shield-check feature-icon"></i>
+                <h3>Digital Signatures</h3>
+                <p>Verify the authenticity of every email sender with advanced digital signature technology</p>
+            </div>
+
+            <div class="feature-item">
+                <i class="bi bi-file-earmark-lock2 feature-icon"></i>
+                <h3>Secure Attachments</h3>
+                <p>Send and receive files with end-to-end encryption, ensuring complete privacy</p>
+            </div>
+
+            <div class="feature-item">
+                <i class="bi bi-umbrella feature-icon"></i>
+                <h3>Attack Protection</h3>
+                <p>Stay protected with our advanced filtering against phishing, spam, and malware</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 SecureMail. All rights reserved.</p>
+    </footer>
+</body>
+</html> 

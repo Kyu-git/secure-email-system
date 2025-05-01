@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - Secure Email System</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 220px;
+            background-color: #1f1f2e;
+            color: white;
+            height: 100vh;
+            padding-top: 20px;
+            position: fixed;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 40px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            padding: 12px 20px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #33334d;
+        }
+
+        .main-content {
+            margin-left: 220px;
+            padding: 30px;
+            width: calc(100% - 220px);
+        }
+
+        .profile-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            background-color: #1f1f2e;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            margin: 0 auto 20px;
+            overflow: hidden;
+            position: relative;
+            border: 4px solid #f4f4f4;
+        }
+
+        .profile-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-sections {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .profile-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .profile-section h3 {
+            color: #1f1f2e;
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #1f1f2e;
+        }
+
+        .profile-info {
+            margin-bottom: 15px;
+        }
+
+        .profile-info strong {
+            display: block;
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+
+        .profile-info p {
+            margin: 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 4px;
+            border: 1px solid #eee;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 8px 16px;
+            background-color: #1f1f2e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #33334d;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+
+        .profile-form {
+            margin-top: 20px;
+        }
+
+        .profile-form input[type="text"],
+        .profile-form textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .profile-form textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .profile-form input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #666;
+        }
+
+        .success-message {
+            color: green;
+            margin-top: 10px;
+            display: none;
+            padding: 10px;
+            background-color: #d4edda;
+            border-radius: 4px;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            display: none;
+            padding: 10px;
+            background-color: #f8d7da;
+            border-radius: 4px;
+        }
+
+        .last-updated {
+            text-align: center;
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .account-status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .account-type {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: bold;
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+
+        .profile-picture-preview {
+            width: 150px;
+            height: 150px;
+            background-color: #f4f4f4;
+            border-radius: 50%;
+            overflow: hidden;
+            margin: 0 auto 20px;
+            display: none;
+            border: 4px solid #1f1f2e;
+            position: relative;
+        }
+
+        .profile-picture-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .preview-container {
+            text-align: center;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .preview-label {
+            display: block;
+            margin-bottom: 10px;
+            color: #666;
+            font-weight: bold;
+        }
+
+        .remove-preview {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            cursor: pointer;
+            display: none;
+        }
+
+        .remove-preview:hover {
+            background: rgba(0, 0, 0, 0.7);
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <h2>📧 SecureMail</h2>
+        <a href="/dashboard">Inbox</a>
+        <a href="/sent">Sent</a>
+        <a href="/compose">Compose</a>
+        <a href="/profile">Profile</a>
+        <a href="/attack_report">Security Report</a>
+        <a href="/help">Help & Support</a>
+        <a href="/logout">Logout</a>
+    </div>
+
+    <div class="main-content">
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    {% if profile_picture %}
+                        <img src="{{ url_for('static', filename='profile_pictures/' + profile_picture) }}" alt="Profile Picture">
+                    {% else %}
+                        {{ name[0]|upper }}
+                    {% endif %}
+                </div>
+                <h2>{{ name }}</h2>
+                <p>{{ email }}</p>
+                <div class="account-type">{{ 'Administrator' if is_admin else 'Standard User' }}</div>
+                <div class="account-status {{ 'status-active' if is_approved else 'status-pending' }}">
+                    {{ 'Active' if is_approved else 'Pending Approval' }}
+                </div>
+            </div>
+
+            <div class="profile-sections">
+                <div class="profile-section">
+                    <h3>📝 Personal Information</h3>
+                    <div class="profile-info">
+                        <strong>Full Name</strong>
+                        <p>{{ name }}</p>
+                    </div>
+                    <div class="profile-info">
+                        <strong>Email Address</strong>
+                        <p>{{ email }}</p>
+                    </div>
+                    {% if bio %}
+                    <div class="profile-info">
+                        <strong>Bio</strong>
+                        <p>{{ bio }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="profile-section">
+                    <h3>⚙️ Update Profile</h3>
+                    <form class="profile-form" action="/api/update_profile" method="post" enctype="multipart/form-data">
+                        <div class="preview-container">
+                            <span class="preview-label">New Profile Picture Preview</span>
+                            <div class="profile-picture-preview">
+                                <img id="preview-image" src="#" alt="Preview">
+                                <button type="button" class="remove-preview" onclick="removePreview()">×</button>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fullname">Full Name</label>
+                            <input type="text" id="fullname" name="fullname" value="{{ name }}" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="bio">Bio</label>
+                            <textarea id="bio" name="bio" placeholder="Tell us about yourself...">{{ bio or '' }}</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="profile_picture">Profile Picture</label>
+                            <input type="file" id="profile_picture" name="profile_picture" accept="image/*" onchange="previewImage(this)">
+                            <small>Allowed formats: PNG, JPG, JPEG, GIF (Max size: 5MB)</small>
+                        </div>
+
+                        <button type="submit" class="btn">Update Profile</button>
+                        <div class="success-message">Profile updated successfully!</div>
+                        <div class="error-message"></div>
+                    </form>
+                </div>
+            </div>
+
+            {% if last_updated %}
+            <div class="last-updated">
+                Last updated: {{ last_updated }}
+            </div>
+            {% endif %}
+
+            <div class="profile-actions">
+                <a href="/change_password" class="btn">Change Password</a>
+                <a href="/logout" class="btn btn-danger">Logout</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Function to preview the selected image
+        function previewImage(input) {
+            const previewContainer = document.querySelector('.preview-container');
+            const preview = document.querySelector('.profile-picture-preview');
+            const previewImage = document.getElementById('preview-image');
+            const removeButton = document.querySelector('.remove-preview');
+            
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    previewContainer.style.display = 'block';
+                    preview.style.display = 'block';
+                    previewImage.src = e.target.result;
+                    removeButton.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // Function to remove the preview
+        function removePreview() {
+            const previewContainer = document.querySelector('.preview-container');
+            const preview = document.querySelector('.profile-picture-preview');
+            const previewImage = document.getElementById('preview-image');
+            const removeButton = document.querySelector('.remove-preview');
+            const fileInput = document.getElementById('profile_picture');
+            
+            previewContainer.style.display = 'none';
+            preview.style.display = 'none';
+            previewImage.src = '#';
+            removeButton.style.display = 'none';
+            fileInput.value = ''; // Clear the file input
+        }
+
+        // Form submission code
+        document.querySelector('.profile-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const successMessage = document.querySelector('.success-message');
+            const errorMessage = document.querySelector('.error-message');
+            const previewContainer = document.querySelector('.preview-container');
+            
+            try {
+                const response = await fetch('/api/update_profile', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    successMessage.style.display = 'block';
+                    errorMessage.style.display = 'none';
+                    previewContainer.style.display = 'none'; // Hide preview after successful update
+                    // Reload the page after 2 seconds to show the updated profile
+                    setTimeout(() => window.location.reload(), 2000);
+                } else {
+                    errorMessage.textContent = data.error || 'Failed to update profile';
+                    errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
+                }
+            } catch (error) {
+                errorMessage.textContent = 'An error occurred while updating the profile';
+                errorMessage.style.display = 'block';
+                successMessage.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sent Emails | Secure Email</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f4f4f4;
+      margin: 0;
+      display: flex;
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: #1f1f2e;
+      color: white;
+      height: 100vh;
+      padding-top: 20px;
+      position: fixed;
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 40px;
+    }
+
+    .sidebar a {
+      display: block;
+      color: white;
+      padding: 12px 20px;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+
+    .sidebar a:hover {
+      background-color: #33334d;
+    }
+
+    .main-content {
+      margin-left: 220px;
+      padding: 30px;
+      width: calc(100% - 220px);
+    }
+
+    .compose-container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .email-item {
+      border-bottom: 1px solid #ddd;
+      padding: 15px 0;
+    }
+
+    .email-item:last-child {
+      border-bottom: none;
+    }
+
+    .timestamp {
+      font-size: 0.9em;
+      color: gray;
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h2>📧 SecureMail</h2>
+    <a href="/dashboard">Inbox</a>
+    <a href="/sent">Sent</a>
+    <a href="/compose">Compose</a>
+    <a href="/profile">Profile</a>
+    <a href="/attack_report">Security Report</a>
+    <a href="/help">Help & Support</a>
+    <a href="/logout">Logout</a>
+  </div>
+
+  <div class="main-content">
+    <div class="compose-container">
+      <h2>📤 Sent Emails</h2>
+      {% if emails and emails|length > 0 %}
+        {% for email in emails %}
+          <div class="email-item">
+            <p><strong>To:</strong> {{ email['recipient'] }}</p>
+            <p><strong>Subject:</strong> {{ email['subject'] or "(No Subject)" }}</p>
+            <p><strong>Message:</strong> {{ email['message'] or "(No Content)" }}</p>
+            {% if email['attachment'] %}
+  <p><a href="{{ url_for('download_attachment', filename=email['attachment'].split('/')[-1]) }}" download>📎 Download Attachment</a></p>
+{% endif %}
+
+            <p class="timestamp">📅 {{ email['timestamp'] }}</p>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p style="text-align: center;">😕 No sent emails to display.</p>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>

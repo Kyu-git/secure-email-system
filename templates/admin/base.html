@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row g-0">
+        <!-- Sidebar -->
+        <nav class="col-md-2 sidebar">
+            <div class="position-sticky">
+                <div class="p-3">
+                    <h5 class="text-muted">Admin Panel</h5>
+                </div>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}" 
+                           href="{{ url_for('admin_dashboard') }}">
+                            <i class="bi bi-speedometer2 me-2"></i>
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'admin_users' %}active{% endif %}" 
+                           href="{{ url_for('admin_users') }}">
+                            <i class="bi bi-people me-2"></i>
+                            Users
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'admin_system_activity' %}active{% endif %}" 
+                           href="{{ url_for('admin_system_activity') }}">
+                            <i class="bi bi-activity me-2"></i>
+                            System Activity
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'admin_help' %}active{% endif %}" 
+                           href="{{ url_for('admin_help') }}">
+                            <i class="bi bi-question-circle me-2"></i>
+                            Help & Support
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-10 admin-main">
+            {% block admin_content %}{% endblock %}
+        </main>
+    </div>
+</div>
+{% endblock %} 

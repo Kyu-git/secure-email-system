@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Help & Support</h1>
+
+    <!-- FAQs Section -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="h4 mb-0">Frequently Asked Questions</h2>
+        </div>
+        <div class="card-body">
+            {% if faqs %}
+                {% set current_category = None %}
+                {% for faq in faqs %}
+                    {% if faq.category != current_category %}
+                        {% if current_category %}
+                            </div>
+                        {% endif %}
+                        <h3 class="h5 mt-3 mb-2">{{ faq.category }}</h3>
+                        <div class="faq-category">
+                        {% set current_category = faq.category %}
+                    {% endif %}
+                    
+                    <div class="faq-item mb-3">
+                        <h4 class="h6 mb-2">{{ faq.question }}</h4>
+                        <p class="text-muted">{{ faq.answer }}</p>
+                    </div>
+                {% endfor %}
+                {% if current_category %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <p class="text-muted">No FAQs available at the moment.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Help Request Form -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h2 class="h4 mb-0">Submit a Help Request</h2>
+        </div>
+        <div class="card-body">
+            <form id="helpRequestForm">
+                <div class="mb-3">
+                    <label for="subject" class="form-label">Subject</label>
+                    <input type="text" class="form-control" id="subject" name="subject" required>
+                </div>
+                <div class="mb-3">
+                    <label for="message" class="form-label">Message</label>
+                    <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- User's Help Requests -->
+    <div class="card">
+        <div class="card-header">
+            <h2 class="h4 mb-0">Your Help Requests</h2>
+        </div>
+        <div class="card-body">
+            {% if help_requests %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Subject</th>
+                                <th>Status</th>
+                                <th>Response</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for request in help_requests %}
+                                <tr>
+                                    <td>{{ request.created_at }}</td>
+                                    <td>{{ request.subject }}</td>
+                                    <td>
+                                        <span class="badge {% if request.status == 'pending' %}bg-warning{% elif request.status == 'resolved' %}bg-success{% else %}bg-info{% endif %}">
+                                            {{ request.status }}
+                                        </span>
+                                    </td>
+                                    <td>{{ request.admin_response or 'No response yet' }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <p class="text-muted">You haven't submitted any help requests yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('helpRequestForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const subject = document.getElementById('subject').value;
+    const message = document.getElementById('message').value;
+    
+    try {
+        const response = await fetch('/api/submit_help_request', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ subject, message })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            alert('Help request submitted successfully!');
+            window.location.reload();
+        } else {
+            alert(data.error || 'Failed to submit help request');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while submitting your request');
+    }
+});
+</script>
+{% endblock %} 
