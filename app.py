@@ -1638,3 +1638,24 @@ def get_help_request(request_id):
         return jsonify({'error': 'Failed to get help request details'}), 500
 
 
+# --- Run the app ---
+if __name__ == '__main__':
+    # First create the database and tables
+    init_db()
+    print("✅ Database initialization completed")
+    
+    # Then run migrations
+    try:
+        migrate_db()
+        print("✅ Database migration completed successfully")
+    except Exception as e:
+        print(f"❌ Database migration error: {str(e)}")
+    
+    # Finally seed initial data
+    try:
+        seed_initial_faqs()
+        print("✅ Initial FAQs seeded successfully")
+    except Exception as e:
+        print(f"❌ Error seeding FAQs: {str(e)}")
+    
+    app.run(debug=True)
