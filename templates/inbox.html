@@ -104,26 +104,26 @@
                         <a href="#" class="block hover:bg-gray-50">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center">
-                                    <p class="text-sm font-medium text-indigo-600 truncate">{{ email.sender }}</p>
+                                    <p class="font-medium text-indigo-600 truncate" style="font-size: 22px;">{{ email.sender }}</p>
                                     <span class="ml-2 verification-badge {{ 'verified' if email.is_verified else 'unverified' }}">
                                         {{ 'Verified' if email.is_verified else 'Unverified' }}
                                     </span>
                                 </div>
                                 <div class="ml-2 flex-shrink-0 flex">
-                                    <p class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                    <p class="px-2 inline-flex leading-5 font-semibold rounded-full bg-gray-100 text-gray-800" style="font-size: 22px;">
                                         {{ email.timestamp }}
                                     </p>
                                 </div>
                             </div>
                             <div class="mt-2 sm:flex sm:justify-between">
                                 <div class="sm:flex">
-                                    <p class="flex items-center text-sm text-gray-500">
+                                    <p class="flex items-center text-gray-500" style="font-size: 22px;">
                                         {{ email.subject }}
                                     </p>
                                 </div>
                             </div>
                             <div class="mt-2">
-                                <p class="text-sm text-gray-500 truncate">{{ email.message }}</p>
+                                <p class="text-gray-500 truncate" style="font-size: 22px;">{{ email.message }}</p>
                             </div>
                             {% if email.attachment %}
                             <div class="mt-2">

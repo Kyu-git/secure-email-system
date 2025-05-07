@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Frequently Asked Questions</h1>
+        <a href="{{ url_for('help_request') }}" class="btn btn-outline-primary">
+            <i class="fas fa-arrow-left"></i> Back to Help Request
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            {% if faqs %}
+                {% set current_category = None %}
+                {% for faq in faqs %}
+                    {% if faq.category != current_category %}
+                        {% if current_category %}
+                            </div>
+                        {% endif %}
+                        <h3 class="h5 mt-4 mb-3">{{ faq.category }}</h3>
+                        <div class="faq-category">
+                        {% set current_category = faq.category %}
+                    {% endif %}
+                    
+                    <div class="faq-item mb-4">
+                        <h4 class="h6 mb-2 fw-bold">{{ faq.question }}</h4>
+                        <p class="text-muted">{{ faq.answer }}</p>
+                    </div>
+                {% endfor %}
+                {% if current_category %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <p class="text-muted">No FAQs available at the moment.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %} 

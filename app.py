@@ -7,7 +7,7 @@ from werkzeug.utils import secure_filename
 from urllib.parse import urlparse
 from flask_login import login_required, current_user, login_user, logout_user
 from flask_login import LoginManager
-from your_user_model import User  # Replace with your actual import
+from your_user_model import User 
 from datetime import timedelta
 from functools import wraps
 
@@ -22,7 +22,7 @@ from io import StringIO
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5 MB limit
-app.config['SECRET_KEY'] = 'your-secret-key-here'  # Change this to a secure secret key
+app.config['SECRET_KEY'] = 'your-secret-key-here'  # one can Change this to a secure secret key
 app.config['SESSION_COOKIE_SECURE'] = False  # Set to True in production with HTTPS
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=60)
@@ -338,8 +338,6 @@ def download_attachment(filename):
 # --- Home route ---
 @app.route('/')
 def home():
-    if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
     return render_template('index.html')
 
 @login_manager.user_loader
@@ -354,8 +352,6 @@ def register_page():
 # --- Login page ---
 @app.route('/login')
 def login_page():
-    if current_user.is_authenticated:
-        return redirect(url_for('dashboard'))
     return render_template('login.html')
 
 # --- Logout route ---
@@ -938,6 +934,7 @@ def admin_users():
         
         # Get search parameters
         search_query = request.args.get('search', '')
+        status = request.args.get('status', '')
         page = int(request.args.get('page', 1))
         per_page = 10
         
@@ -946,10 +943,26 @@ def admin_users():
         count_query = 'SELECT COUNT(*) FROM users'
         params = []
         
+        # Add status filter if provided
+        if status:
+            if status == 'pending':
+                query += ' WHERE is_approved = FALSE'
+                count_query += ' WHERE is_approved = FALSE'
+            elif status == 'approved':
+                query += ' WHERE is_approved = TRUE'
+                count_query += ' WHERE is_approved = TRUE'
+            elif status == 'rejected':
+                query += ' WHERE is_approved = FALSE'
+                count_query += ' WHERE is_approved = FALSE'
+        
         # Add search filter if provided
         if search_query:
-            query += ' WHERE fullname LIKE ? OR email LIKE ?'
-            count_query += ' WHERE fullname LIKE ? OR email LIKE ?'
+            if status:
+                query += ' AND (fullname LIKE ? OR email LIKE ?)'
+                count_query += ' AND (fullname LIKE ? OR email LIKE ?)'
+            else:
+                query += ' WHERE fullname LIKE ? OR email LIKE ?'
+                count_query += ' WHERE fullname LIKE ? OR email LIKE ?'
             params.extend([f'%{search_query}%', f'%{search_query}%'])
         
         # Add pagination
@@ -976,6 +989,7 @@ def admin_users():
         return render_template('admin/users.html', 
                              users=users,
                              search_query=search_query,
+                             status=status,
                              page=page,
                              total_pages=total_pages,
                              total_users=total_users)
@@ -984,6 +998,7 @@ def admin_users():
         return render_template('admin/users.html', 
                              users=[],
                              search_query='',
+                             status='',
                              page=1,
                              total_pages=1,
                              total_users=0)
@@ -1144,39 +1159,6 @@ def toggle_admin_status(user_id):
         print(f"Toggle admin error: {str(e)}")
         return jsonify({'error': 'Failed to update admin status'}), 500
 
-@app.route('/admin/user/<int:user_id>/delete', methods=['POST'])
-@admin_required
-def delete_user(user_id):
-    try:
-        conn = sqlite3.connect(DB_NAME)
-        cursor = conn.cursor()
-        
-        # Check if user exists
-        cursor.execute('SELECT email FROM users WHERE id = ?', (user_id,))
-        user = cursor.fetchone()
-        
-        if not user:
-            return jsonify({'error': 'User not found'}), 404
-            
-        user_email = user[0]
-        
-        # Delete user's emails
-        cursor.execute('DELETE FROM emails WHERE sender = ? OR recipient = ?', (user_email, user_email))
-        
-        # Delete user's rejected emails
-        cursor.execute('DELETE FROM rejected_emails WHERE sender = ? OR recipient = ?', (user_email, user_email))
-        
-        # Delete user
-        cursor.execute('DELETE FROM users WHERE id = ?', (user_id,))
-        
-        conn.commit()
-        conn.close()
-        
-        return jsonify({'message': 'User deleted successfully'})
-    except Exception as e:
-        print(f"Delete user error: {str(e)}")
-        return jsonify({'error': 'Failed to delete user'}), 500
-
 @app.route('/api/update_profile', methods=['POST'])
 @login_required
 def update_profile():
@@ -1308,14 +1290,15 @@ def migrate_db():
 @app.route('/help')
 @login_required
 def help_page():
+    return redirect(url_for('help_request'))
+
+@app.route('/help/request')
+@login_required
+def help_request():
     try:
         conn = sqlite3.connect(DB_NAME)
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
-        
-        # Get all FAQs
-        c.execute('SELECT * FROM faqs ORDER BY category, created_at DESC')
-        faqs = c.fetchall()
         
         # Get user's help requests
         c.execute('''
@@ -1329,16 +1312,37 @@ def help_page():
         
         conn.close()
         
-        return render_template('help.html',
+        return render_template('help_request.html',
                              name=current_user.fullname,
-                             faqs=faqs,
                              help_requests=help_requests)
     except Exception as e:
-        print("Help page error:", str(e))
-        return render_template('help.html',
+        print("Help request page error:", str(e))
+        return render_template('help_request.html',
                              name=current_user.fullname,
-                             faqs=[],
                              help_requests=[])
+
+@app.route('/help/faqs')
+@login_required
+def faqs():
+    try:
+        conn = sqlite3.connect(DB_NAME)
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+        
+        # Get all FAQs
+        c.execute('SELECT * FROM faqs ORDER BY category, created_at DESC')
+        faqs = c.fetchall()
+        
+        conn.close()
+        
+        return render_template('faqs.html',
+                             name=current_user.fullname,
+                             faqs=faqs)
+    except Exception as e:
+        print("FAQs page error:", str(e))
+        return render_template('faqs.html',
+                             name=current_user.fullname,
+                             faqs=[])
 
 @app.route('/api/submit_help_request', methods=['POST'])
 @login_required

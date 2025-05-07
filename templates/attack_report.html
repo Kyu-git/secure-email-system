@@ -127,6 +127,58 @@
         .date-filter button:hover {
             background-color: #33334d;
         }
+
+        .print-button {
+            padding: 8px 16px;
+            background-color: #1f1f2e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .print-button:hover {
+            background-color: #33334d;
+        }
+
+        /* Print styles */
+        @media print {
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 0;
+            }
+
+            .report-container {
+                box-shadow: none;
+                padding: 20px;
+            }
+
+            .date-filter {
+                display: none;
+            }
+
+            .print-button {
+                display: none;
+            }
+
+            .attack-item {
+                page-break-inside: avoid;
+            }
+
+            .stats-grid {
+                page-break-after: always;
+            }
+
+            @page {
+                margin: 2cm;
+            }
+        }
     </style>
 </head>
 <body>
@@ -150,6 +202,7 @@
                 <input type="date" id="startDate" placeholder="Start Date">
                 <input type="date" id="endDate" placeholder="End Date">
                 <button onclick="filterByDate()">Filter</button>
+                <button class="print-button" onclick="window.print()">Print Report</button>
             </div>
 
             <!-- Statistics -->
